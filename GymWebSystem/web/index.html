@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gym Membership System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="loginView" class="login-page">
+    <div class="login-card">
+      <div class="login-logo">GMS</div>
+      <h1>Gym Membership System</h1>
+      <p class="login-subtitle">Staff Login</p>
+
+      <label for="loginUsername">Username</label>
+      <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username">
+
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+
+      <button id="loginBtn" onclick="doLogin()">Login</button>
+      <p id="loginError" class="error-text"></p>
+    </div>
+  </div>
+
+  <div id="appView" class="app" style="display:none">
+
+    <aside class="sidebar">
+      <div class="sidebar-logo"><span>Gym MS</span></div>
+      <nav>
+        <button class="nav-btn active" data-view="dashboard" onclick="switchView('dashboard')">
+          Dashboard
+        </button>
+        <button class="nav-btn" data-view="members" onclick="switchView('members')">
+          Members
+        </button>
+        <button class="nav-btn" data-view="payments" onclick="switchView('payments')">
+          Payments
+        </button>
+        <button class="nav-btn" data-view="attendance" onclick="switchView('attendance')">
+          Check-in
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <span id="loggedInUser"></span>
+        <button class="logout-btn" onclick="doLogout()">Logout</button>
+      </div>
+    </aside>
+
+    <main class="content">
+
+      <section id="view-dashboard" class="view active">
+        <h2>Dashboard</h2>
+        <div class="stat-cards">
+          <div class="stat-card green">
+            <div class="stat-value" id="statMembers">0</div>
+            <div class="stat-label">Total Members</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-value" id="statPayments">$0</div>
+            <div class="stat-label">Total Payments</div>
+          </div>
+          <div class="stat-card yellow">
+            <div class="stat-value" id="statCheckins">0</div>
+            <div class="stat-label">Today's Check-ins</div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <h3>Quick Actions</h3>
+          <div class="action-grid">
+            <button class="action-card" onclick="switchView('members')">
+              <span class="action-title">Manage Members</span>
+              <span class="action-desc">Register, update, delete members</span>
+            </button>
+            <button class="action-card" onclick="switchView('payments')">
+              <span class="action-title">Record Payment</span>
+              <span class="action-desc">Add payment &amp; view history</span>
+            </button>
+            <button class="action-card" onclick="switchView('attendance')">
+              <span class="action-title">Check-in</span>
+              <span class="action-desc">Record member attendance</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-members" class="view">
+        <h2>Member Management</h2>
+
+        <div class="panel">
+          <h3 id="memberFormTitle">Add New Member</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="memberName">Name *</label>
+              <input type="text" id="memberName" placeholder="Full name">
+            </div>
+            <div class="form-group">
+              <label for="memberEmail">Email *</label>
+              <input type="email" id="memberEmail" placeholder="email@example.com">
+            </div>
+            <div class="form-group">
+              <label for="memberPhone">Phone *</label>
+              <input type="text" id="memberPhone" placeholder="Phone number">
+            </div>
+            <div class="form-group">
+              <label for="memberPlan">Membership Plan</label>
+              <select id="memberPlan"></select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-green" onclick="addMember()">Add</button>
+            <button class="btn btn-blue" onclick="updateMember()">Update</button>
+            <button class="btn btn-red" onclick="deleteMember()">Delete</button>
+            <button class="btn btn-gray" onclick="clearMemberForm()">Clear</button>
+            <span id="memberFormMsg" class="form-msg"></span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Member List</h3>
+          <div class="table-wrap">
+            <table id="membersTable">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Name</th><th>Email</th><th>Phone</th>
+                  <th>Plan</th><th>Join Date</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-payments" class="view">
+        <h2>Payment Management</h2>
+
+        <div class="panel">
+          <h3>Record New Payment</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="paymentMember">Select Member *</label>
+              <select id="paymentMember"></select>
+            </div>
+            <div class="form-group">
+              <label for="paymentAmount">Amount ($) *</label>
+              <input type="number" id="paymentAmount" placeholder="0.00" min="0.01" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="paymentMethod">Payment Method</label>
+              <select id="paymentMethod">
+                <option>Cash</option>
+                <option>Credit Card</option>
+                <option>Debit Card</option>
+                <option>Online Transfer</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-green" onclick="addPayment()">Record Payment</button>
+            <span id="paymentFormMsg" class="form-msg"></span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Payment History</h3>
+          <div class="table-wrap">
+            <table id="paymentsTable">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Member</th><th>Amount</th>
+                  <th>Date</th><th>Method</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-attendance" class="view">
+        <h2>Check-in / Attendance</h2>
+
+        <div class="panel">
+          <h3>Member Check-in</h3>
+          <p class="hint">Select a member and click Check In to record their gym attendance.</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="attendanceMember">Select Member *</label>
+              <select id="attendanceMember"></select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-yellow" onclick="doCheckIn()">Check In</button>
+            <span id="attendanceFormMsg" class="form-msg"></span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Check-in History</h3>
+          <div class="table-wrap">
+            <table id="attendanceTable">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Member</th><th>Check-in Time</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

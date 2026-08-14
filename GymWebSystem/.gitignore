@@ -1,0 +1,4 @@
+out/
+*.class
+server_log.txt
+server_err.txt
